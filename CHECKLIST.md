@@ -24,8 +24,8 @@ Branch: `feat/firebase-integration`
 - [x] `hooks/useSession.js` — Firestore real-time listener
 - [x] Create akışı: form → oturum oluştur → `status: "waiting"` → link göster
 - [x] Join akışı: sessionId doğrula → guestAnswers yaz
-- [ ] Firebase projesi oluştur + config'i `.env`'e koy (KULLANICI)
-- [ ] Firestore emulator veya gerçek proje ile uçtan uca test
+- [x] Firebase projesi oluştur + config'i `.env`'e koy (KULLANICI) — `datchiapp`, europe-west3
+- [x] Uçtan uca test: Create→link→Join→Firestore'da iki cevap + waiting doğrulandı
 
 ## 2. Eşleştirme Motoru (Cloud Functions, LLM YOK)
 Branch: `feat/matcher`
