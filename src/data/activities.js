@@ -15,3 +15,14 @@ export const ACTIVITIES = [
 
 // Doğrulama / eşleştirme için sadece id listesi
 export const ACTIVITY_IDS = ACTIVITIES.map((a) => a.id)
+
+// id → { label, emoji } hızlı erişim (reveal ekranı için)
+export const ACTIVITY_BY_ID = Object.fromEntries(
+  ACTIVITIES.map((a) => [a.id, a]),
+)
+
+// "kahve" → "☕ Kahve" gibi etiket üret (bilinmeyen id kendini döner)
+export function activityLabel(id) {
+  const a = ACTIVITY_BY_ID[id]
+  return a ? `${a.emoji} ${a.label}` : id
+}

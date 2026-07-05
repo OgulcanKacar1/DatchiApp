@@ -44,10 +44,11 @@ Branch: `feat/matcher`
 
 ## 3. Real-time Reveal
 Branch: `feat/reveal`
-- [ ] `Result.jsx` — `useSession` ile `status: "ready"` olunca sonucu göster
-- [ ] Bekleme ekranı: A tarafına "cevap bekleniyor" + linki tekrar gönder (§ risk 1)
-- [ ] `JokerReveal.jsx` — iki tarafın joker cevabını yan yana göster (§7.4)
-- [ ] Reveal animasyonu / "büyü anı"
+- [x] `Result.jsx` — `useSession` ile `status: "ready"` olunca sonucu göster
+- [x] Bekleme ekranı: A tarafına "cevap bekleniyor" (§ risk 1)
+- [x] `JokerReveal.jsx` — iki tarafın joker cevabını yan yana göster (§7.4)
+- [x] Reveal animasyonu / "büyü anı" (sırayla beliren kartlar)
+- [ ] "Linki tekrar gönder" kolaylığı (bekleme ekranında — küçük ekleme)
 
 ## 4. Büyüme: Paylaşılabilir Date Kartı
 Branch: `feat/date-card`
