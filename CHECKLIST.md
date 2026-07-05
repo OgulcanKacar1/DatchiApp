@@ -17,13 +17,13 @@ Durum: `[ ]` yapılacak · `[~]` devam ediyor · `[x]` bitti
 
 ## 1. Firebase Entegrasyon Katmanı  ← ŞU AN
 Branch: `feat/firebase-integration`
-- [ ] `.env.example` + `.gitignore`'a `.env` (secret repoya girmez, §5)
-- [ ] `lib/firebase.js` — client init (config env'den okunur)
-- [ ] `lib/session.js` — `createSession(creatorAnswers)` → sessionId + magic link
-- [ ] `lib/session.js` — `submitGuestAnswers(sessionId, guestAnswers)`
-- [ ] `hooks/useSession.js` — Firestore real-time listener
-- [ ] Create akışı: form → oturum oluştur → `status: "waiting"` → link göster
-- [ ] Join akışı: sessionId doğrula → guestAnswers yaz
+- [x] `.env.example` + `.gitignore`'a `.env` (secret repoya girmez, §5)
+- [x] `lib/firebase.js` — client init (config env'den okunur)
+- [x] `lib/session.js` — `createSession(creatorAnswers)` → sessionId + magic link
+- [x] `lib/session.js` — `submitGuestAnswers(sessionId, guestAnswers)`
+- [x] `hooks/useSession.js` — Firestore real-time listener
+- [x] Create akışı: form → oturum oluştur → `status: "waiting"` → link göster
+- [x] Join akışı: sessionId doğrula → guestAnswers yaz
 - [ ] Firebase projesi oluştur + config'i `.env`'e koy (KULLANICI)
 - [ ] Firestore emulator veya gerçek proje ile uçtan uca test
 
