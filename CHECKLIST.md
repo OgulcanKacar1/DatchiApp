@@ -38,7 +38,7 @@ Branch: `feat/matcher`
 - [x] `matchDate` trigger: iki cevap gelince `result` yaz, `status: "ready"`
 - [x] Matcher + places birim testleri (10/10 geçiyor, Firebase'siz)
 - [x] Yerel emülatör kurulumu (VITE_USE_EMULATOR) — Blaze'siz tam akış testi
-- [ ] Emülatörle uçtan uca test: waiting → ready dönüşümünü doğrula
+- [x] Emülatörle uçtan uca test: waiting → ready + doğru şablon doğrulandı ✓
 - [ ] Places sağlayıcı seç + API anahtarı (KULLANICI, deploy anında)
 - [ ] Blaze'e geç + deploy (KULLANICI, canlıya çıkarken)
 
