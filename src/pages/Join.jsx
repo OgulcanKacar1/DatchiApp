@@ -1,17 +1,77 @@
 // Guest formu — magic link ile açılır — CLAUDE.md §10 adım 4
-// TODO(Firebase): sessionId'yi doğrula (yoksa/expired ise uyar), guestAnswers yaz,
-// sonra /s/:sessionId/result'a git. Şimdilik Answer'ı ekranda gösteriyoruz.
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+// sessionId doğrula → guestAnswers yaz → /result'a git (real-time reveal orada).
+import { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import PreferenceForm from '../components/PreferenceForm.jsx'
+import { getSessionMeta, submitGuestAnswers } from '../lib/session.js'
 
 export default function Join() {
   const { sessionId } = useParams()
-  const [answer, setAnswer] = useState(null)
+  const navigate = useNavigate()
+  const [meta, setMeta] = useState({ loading: true })
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState(null)
 
-  function handleSubmit(a) {
-    console.log('guestAnswers:', a, 'session:', sessionId)
-    setAnswer(a)
+  useEffect(() => {
+    let active = true
+    getSessionMeta(sessionId)
+      .then((m) => active && setMeta({ loading: false, ...m }))
+      .catch(() => active && setMeta({ loading: false, exists: false }))
+    return () => {
+      active = false
+    }
+  }, [sessionId])
+
+  async function handleSubmit(answer) {
+    setBusy(true)
+    setError(null)
+    try {
+      await submitGuestAnswers(sessionId, answer)
+      navigate(`/s/${sessionId}/result`)
+    } catch (e) {
+      console.error(e)
+      setError('Cevap gönderilemedi. Bağlantını kontrol et.')
+      setBusy(false)
+    }
+  }
+
+  if (meta.loading) {
+    return (
+      <main className="mx-auto flex min-h-svh max-w-md items-center justify-center px-6 text-neutral-500">
+        Yükleniyor…
+      </main>
+    )
+  }
+
+  // Yanlış / süresi dolmuş link
+  if (!meta.exists) {
+    return (
+      <main className="mx-auto flex min-h-svh max-w-md flex-col items-center justify-center gap-3 px-6 text-center">
+        <h1 className="text-2xl font-semibold text-neutral-900">
+          Link geçersiz
+        </h1>
+        <p className="text-neutral-500">
+          Bu date oturumu bulunamadı veya süresi dolmuş (linkler 24 saat
+          geçerli).
+        </p>
+      </main>
+    )
+  }
+
+  // Guest zaten cevaplamış → sonuca yönlendir
+  if (meta.alreadyAnswered) {
+    return (
+      <main className="mx-auto flex min-h-svh max-w-md flex-col items-center justify-center gap-3 px-6 text-center">
+        <p className="text-neutral-600">Bu oturuma zaten cevap verilmiş.</p>
+        <button
+          type="button"
+          onClick={() => navigate(`/s/${sessionId}/result`)}
+          className="rounded-xl bg-rose-500 px-5 py-3 font-medium text-white hover:bg-rose-600"
+        >
+          Sonucu gör
+        </button>
+      </main>
+    )
   }
 
   return (
@@ -23,19 +83,16 @@ export default function Join() {
         </p>
       </header>
 
-      {answer ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
-          <p className="font-semibold">Tercihlerin alındı ✓</p>
-          <p className="mt-1 text-emerald-700">
-            (İskele) Firebase bağlanınca sonuç ekranına yönlendirileceksin.
-          </p>
-          <pre className="mt-3 overflow-x-auto rounded-lg bg-white/60 p-3 text-xs text-neutral-700">
-            {JSON.stringify(answer, null, 2)}
-          </pre>
+      {error && (
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+          {error}
         </div>
-      ) : (
-        <PreferenceForm submitLabel="Gönder" onSubmit={handleSubmit} />
       )}
+
+      <PreferenceForm
+        submitLabel={busy ? 'Gönderiliyor…' : 'Gönder'}
+        onSubmit={handleSubmit}
+      />
     </main>
   )
 }
