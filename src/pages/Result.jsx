@@ -1,15 +1,18 @@
 // Real-time reveal — CLAUDE.md §10 adım 6, §3 (reveal büyüsü)
 // useSession listener'ı status "ready" olunca result'ı anında düşürür.
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSession } from '../hooks/useSession.js'
 import { activityLabel } from '../data/activities.js'
 import JokerReveal from '../components/JokerReveal.jsx'
+import DateCard from '../components/DateCard.jsx'
 
 const BUDGET_LABEL = { 1: '₺', 2: '₺₺', 3: '₺₺₺' }
 
 export default function Result() {
   const { sessionId } = useParams()
   const s = useSession(sessionId)
+  const [showCard, setShowCard] = useState(false)
 
   if (s.loading) {
     return <Centered>Yükleniyor…</Centered>
@@ -123,10 +126,22 @@ export default function Result() {
         <JokerReveal jokerReveal={jokerReveal} />
       </div>
 
-      <p
-        className="reveal mt-2 text-center text-xs text-neutral-400"
-        style={{ animationDelay: '450ms' }}
-      >
+      {/* Paylaşılabilir Date Kartı (§8) */}
+      <div className="reveal mt-2" style={{ animationDelay: '450ms' }}>
+        {showCard ? (
+          <DateCard result={s.result} />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowCard(true)}
+            className="w-full rounded-xl border border-rose-200 bg-rose-50 px-6 py-3 font-medium text-rose-700 transition hover:bg-rose-100"
+          >
+            💌 Bu rotayı kart olarak paylaş
+          </button>
+        )}
+      </div>
+
+      <p className="mt-2 text-center text-xs text-neutral-400">
         İyi eğlenceler ✨ · Datchi
       </p>
     </main>
