@@ -29,15 +29,18 @@ Branch: `feat/firebase-integration`
 
 ## 2. Eşleştirme Motoru (Cloud Functions, LLM YOK)
 Branch: `feat/matcher`
-- [ ] `functions/` init (Firebase Functions, Node.js)
-- [ ] `functions/lib/matcher.js` — iki Answer'ı ortak tercihe indir (§7.1)
-- [ ] Şablon puanlama + ilk 2-3'ten rastgele seçim (§7.2)
-- [ ] `functions/lib/places.js` — sağlayıcı-bağımsız `findVenue()` arayüzü (§7.3)
-- [ ] `functions/providers/` — Foursquare veya Yandex adaptörü
-- [ ] Orta nokta hesabı + yarıçap genişletme mantığı (§7.3 tuzağı)
-- [ ] `matchDate` trigger: iki cevap gelince `result` yaz, `status: "ready"`
-- [ ] Places sağlayıcı seç + API anahtarını Functions env'e koy (KULLANICI)
-- [ ] Matcher birim testleri (saf fonksiyon, Firebase'siz test edilebilir)
+- [x] `functions/` init (ESM paket, firebase.json, .firebaserc)
+- [x] `functions/lib/matcher.js` — iki Answer'ı ortak tercihe indir (§7.1)
+- [x] Şablon puanlama + ilk 2-3'ten rastgele seçim (§7.2)
+- [x] `functions/lib/places.js` — sağlayıcı-bağımsız `findVenue()` arayüzü (§7.3)
+- [x] `functions/providers/` — stub (anahtarsız test) + Foursquare adaptörü
+- [x] Orta nokta hesabı + yarıçap genişletme mantığı (§7.3 tuzağı)
+- [x] `matchDate` trigger: iki cevap gelince `result` yaz, `status: "ready"`
+- [x] Matcher + places birim testleri (10/10 geçiyor, Firebase'siz)
+- [x] Yerel emülatör kurulumu (VITE_USE_EMULATOR) — Blaze'siz tam akış testi
+- [x] Emülatörle uçtan uca test: waiting → ready + doğru şablon doğrulandı ✓
+- [ ] Places sağlayıcı seç + API anahtarı (KULLANICI, deploy anında)
+- [ ] Blaze'e geç + deploy (KULLANICI, canlıya çıkarken)
 
 ## 3. Real-time Reveal
 Branch: `feat/reveal`
