@@ -1,7 +1,7 @@
 // Firebase client init — CLAUDE.md §4
 // Config .env'den okunur (VITE_ önekli), repoya girmez (§5).
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -23,3 +23,10 @@ if (!isFirebaseConfigured && import.meta.env.DEV) {
 
 const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)
+
+// Yerel emülatöre bağlan (VITE_USE_EMULATOR=true iken) — Blaze'siz, ücretsiz
+// tam akış testi. Cloud Function tetiklenmesini burada görebilirsin.
+if (import.meta.env.VITE_USE_EMULATOR === 'true') {
+  connectFirestoreEmulator(db, '127.0.0.1', 8080)
+  if (import.meta.env.DEV) console.info('[Datchi] Firestore emülatörüne bağlı')
+}

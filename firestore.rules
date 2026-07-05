@@ -1,0 +1,15 @@
+rules_version = '2';
+
+// ⚠️ GEÇİCİ GELİŞTİRME KURALLARI — CLAUDE.md §5 / CHECKLIST Bölüm 5'te
+// gerçek kurallarla değiştirilecek:
+//   - result alanını client YAZAMAZ (sadece Cloud Function)
+//   - bir oturuma sadece ilgili taraflar yazabilir
+//   - expireAt geçmiş oturumlar okunamaz
+// Şu an console'daki "test mode" ile aynı: açık. CANLIYA BÖYLE ÇIKMA.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
