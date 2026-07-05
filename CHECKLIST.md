@@ -52,9 +52,10 @@ Branch: `feat/reveal`
 
 ## 4. Büyüme: Paylaşılabilir Date Kartı
 Branch: `feat/date-card`
-- [ ] `DateCard.jsx` — markalı, screenshot'lanabilir kart (§8)
-- [ ] Görsel indir / paylaş (html-to-image veya canvas)
-- [ ] Küçük Datchi logosu + Instagram story oranı
+- [x] `DateCard.jsx` — markalı, screenshot'lanabilir kart (§8)
+- [x] Görsel indir (html-to-image → PNG, retina)
+- [x] Datchi logosu + Instagram story oranı (9:16) + datchi.app altbilgi
+- [ ] (Opsiyonel, sonra) görsel ince ayar / renk-tipografi cilası
 
 ## 5. Sertleştirme & Deploy
 Branch: `feat/hardening`
