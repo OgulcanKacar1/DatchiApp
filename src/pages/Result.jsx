@@ -49,12 +49,14 @@ export default function Result() {
   }
 
   const { template, venue, sharedPref, jokerReveal } = s.result
+  const couple =
+    s.creatorName && s.guestName ? `${s.creatorName} & ${s.guestName}` : null
 
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col gap-4 px-5 py-10">
       <header className="reveal text-center" style={{ animationDelay: '0ms' }}>
         <p className="text-xs font-bold uppercase tracking-widest text-brand-500">
-          Date Rotanız
+          {couple ? `${couple} için` : 'Date Rotanız'}
         </p>
         <h1 className="mt-1 font-display text-4xl font-semibold tracking-tight text-ink">
           {template.title}
@@ -138,7 +140,7 @@ export default function Result() {
       {/* Paylaşılabilir Date Kartı (§8) */}
       <div className="reveal mt-2" style={{ animationDelay: '450ms' }}>
         {showCard ? (
-          <DateCard result={s.result} />
+          <DateCard result={s.result} couple={couple} />
         ) : (
           <button
             type="button"
