@@ -38,16 +38,16 @@ export default function Create() {
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col gap-6 px-6 py-10">
       <header>
-        <h1 className="text-2xl font-semibold text-neutral-900">
+        <h1 className="text-2xl font-semibold text-ink">
           Tercihlerini gir
         </h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <p className="mt-1 text-sm text-muted">
           Sonra oluşacak linki karşı tarafa gönderirsin.
         </p>
       </header>
 
       {error && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+        <div className="rounded-xl border border-brand-200 bg-brand-50 p-3 text-sm text-brand-700">
           {error}
         </div>
       )}
@@ -65,12 +65,12 @@ export default function Create() {
             <input
               readOnly
               value={link}
-              className="min-w-0 flex-1 truncate bg-transparent px-2 text-sm text-neutral-700 outline-none"
+              className="min-w-0 flex-1 truncate bg-transparent px-2 text-sm text-ink outline-none"
             />
             <button
               type="button"
               onClick={copyLink}
-              className="shrink-0 rounded-md bg-rose-500 px-3 py-2 text-sm font-medium text-white hover:bg-rose-600"
+              className="shrink-0 rounded-md bg-brand-500 px-3 py-2 text-sm font-medium text-white hover:bg-rose-600"
             >
               {copied ? 'Kopyalandı ✓' : 'Kopyala'}
             </button>

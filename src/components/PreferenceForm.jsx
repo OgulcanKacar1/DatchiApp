@@ -22,10 +22,10 @@ const TIME_OF_DAY = [
 // Küçük yardımcı: seçili duruma göre buton stilini üretir
 function pill(active) {
   return [
-    'rounded-xl border px-4 py-3 text-sm font-medium transition active:scale-[0.98]',
+    'rounded-2xl border px-4 py-3 text-sm font-bold transition active:scale-[0.98]',
     active
-      ? 'border-rose-500 bg-rose-50 text-rose-700'
-      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300',
+      ? 'border-brand-400 bg-brand-50 text-brand-700 shadow-[0_2px_10px_-4px_rgba(255,77,109,0.4)]'
+      : 'border-sand-200 bg-white text-ink hover:border-brand-200',
   ].join(' ')
 }
 
@@ -87,7 +87,7 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-7">
       {/* Bütçe */}
       <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-neutral-900">
+        <legend className="mb-2 text-sm font-semibold text-ink">
           Bütçe
         </legend>
         <div className="grid grid-cols-3 gap-2">
@@ -99,7 +99,7 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
               className={pill(budget === b.value)}
             >
               <span className="block text-base">{b.label}</span>
-              <span className="mt-0.5 block text-xs text-neutral-400">
+              <span className="mt-0.5 block text-xs text-muted">
                 {b.hint}
               </span>
             </button>
@@ -109,9 +109,9 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
 
       {/* Aktiviteler (çoklu) */}
       <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-neutral-900">
+        <legend className="mb-2 text-sm font-semibold text-ink">
           Ne yapmak istersin?{' '}
-          <span className="font-normal text-neutral-400">(birden fazla)</span>
+          <span className="font-normal text-muted">(birden fazla)</span>
         </legend>
         <div className="flex flex-wrap gap-2">
           {ACTIVITIES.map((a) => (
@@ -130,7 +130,7 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
 
       {/* Enerji */}
       <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-neutral-900">
+        <legend className="mb-2 text-sm font-semibold text-ink">
           Enerji
         </legend>
         <div className="grid grid-cols-2 gap-2">
@@ -150,7 +150,7 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
 
       {/* Zaman */}
       <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-neutral-900">
+        <legend className="mb-2 text-sm font-semibold text-ink">
           Ne zaman?
         </legend>
         <div className="grid grid-cols-2 gap-2">
@@ -170,7 +170,7 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
 
       {/* Konum */}
       <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-neutral-900">
+        <legend className="mb-2 text-sm font-semibold text-ink">
           Konum
         </legend>
         <button
@@ -185,11 +185,11 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
               : '📍 Konumumu kullan'}
         </button>
         {locState === 'error' && (
-          <p className="mt-2 text-xs text-rose-500">
+          <p className="mt-2 text-xs text-brand-500">
             Konuma erişilemedi. Tarayıcı iznini kontrol et.
           </p>
         )}
-        <p className="mt-2 text-xs text-neutral-400">
+        <p className="mt-2 text-xs text-muted">
           Konumun sadece orta noktayı bulmak için kullanılır, kaydedilmez.
         </p>
       </fieldset>
@@ -200,15 +200,15 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
           <button
             type="button"
             onClick={() => setJokerOpen(true)}
-            className="text-sm font-medium text-rose-600 hover:text-rose-700"
+            className="text-sm font-medium text-brand-600 hover:text-brand-700"
           >
             + Joker soru ekle (opsiyonel)
           </button>
         ) : (
           <div className="flex flex-col gap-2">
-            <legend className="text-sm font-semibold text-neutral-900">
+            <legend className="text-sm font-semibold text-ink">
               Joker{' '}
-              <span className="font-normal text-neutral-400">
+              <span className="font-normal text-muted">
                 (sadece eğlence, sonucu etkilemez)
               </span>
             </legend>
@@ -216,13 +216,13 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
               value={jokerQ}
               onChange={(e) => setJokerQ(e.target.value)}
               placeholder="Soru: Ananaslı pizza?"
-              className="rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none focus:border-rose-400"
+              className="rounded-2xl border border-sand-200 px-4 py-3 text-sm outline-none focus:border-brand-400"
             />
             <input
               value={jokerA}
               onChange={(e) => setJokerA(e.target.value)}
               placeholder="Senin cevabın: Evet 🍍"
-              className="rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none focus:border-rose-400"
+              className="rounded-2xl border border-sand-200 px-4 py-3 text-sm outline-none focus:border-brand-400"
             />
           </div>
         )}
@@ -231,12 +231,12 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
       <button
         type="submit"
         disabled={!isValid}
-        className="mt-2 w-full rounded-xl bg-rose-500 px-6 py-4 text-lg font-medium text-white shadow-sm transition hover:bg-rose-600 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-neutral-300"
+        className="mt-2 w-full rounded-full bg-brand-500 px-6 py-4 text-lg font-bold text-white shadow-[var(--shadow-soft)] transition hover:bg-brand-600 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submitLabel}
       </button>
       {!isValid && (
-        <p className="-mt-4 text-center text-xs text-neutral-400">
+        <p className="-mt-4 text-center text-xs text-muted">
           Bütçe, en az bir aktivite, enerji, zaman ve konum gerekli.
         </p>
       )}
