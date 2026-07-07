@@ -57,7 +57,20 @@ Branch: `feat/date-card`
 - [x] Datchi logosu + Instagram story oranı (9:16) + datchi.app altbilgi
 - [ ] (Opsiyonel, sonra) görsel ince ayar / renk-tipografi cilası
 
-## 5. Sertleştirme & Deploy
+## 5. Tasarım & Marka Cilası  ← ŞU AN
+Branch: `feat/design` · Yön: **sıcak & flörtöz** (rose/coral + krem, yuvarlak, samimi)
+- [ ] Tasarım sistemi: renk paleti + tipografi + spacing token'ları (index.css @theme)
+- [ ] Paylaşılan primitive'ler (Button, Card, Chip) tutarlı hale
+- [ ] Home (landing) — sıcak karşılama, marka, net CTA
+- [ ] PreferenceForm cilası — seçim durumları, mikro etkileşim
+- [ ] Create/link ekranı — paylaşma anını güzelleştir
+- [ ] Reveal ekranı estetiği — "büyü anı"nı güçlendir
+- [ ] DateCard görsel cila — screenshot'lanası hale
+- [ ] Logo / marka işareti (basit wordmark yeter)
+- [ ] Mobil ince ayar (birincil kitle telefondan girer)
+- [ ] (Opsiyonel) dark mode
+
+## 6. Sertleştirme & Deploy
 Branch: `feat/hardening`
 - [ ] `firestore.rules` — sadece ilgili taraflar yazar, `result` client'a kapalı (§5)
 - [ ] TTL policy — `expireAt` alanına 24s otomatik silme (§2, §6.3)
