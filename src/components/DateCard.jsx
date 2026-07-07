@@ -3,7 +3,8 @@
 // html-to-image ile PNG olarak indirilebilir.
 import { useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
-import { activityLabel } from '../data/activities.js'
+import { Heart, MapPin, Download } from 'lucide-react'
+import { ACTIVITY_BY_ID } from '../data/activities.js'
 
 const BUDGET_LABEL = { 1: '₺', 2: '₺₺', 3: '₺₺₺' }
 
@@ -45,7 +46,9 @@ export default function DateCard({ result }) {
       >
         {/* Marka */}
         <div className="flex items-center gap-2">
-          <span className="text-2xl">💘</span>
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/20">
+            <Heart size={16} fill="currentColor" strokeWidth={0} />
+          </span>
           <span className="font-display text-lg font-semibold tracking-tight">
             Datchi
           </span>
@@ -69,7 +72,9 @@ export default function DateCard({ result }) {
             <p className="text-xs uppercase tracking-wide text-white/60">
               Mekân
             </p>
-            <p className="mt-1 text-base font-semibold">📍 {venue.name}</p>
+            <p className="mt-1 flex items-center gap-1.5 text-base font-semibold">
+              <MapPin size={16} strokeWidth={2.4} /> {venue.name}
+            </p>
           </div>
         )}
 
@@ -80,7 +85,7 @@ export default function DateCard({ result }) {
             {sharedPref.energy && <CardChip>{sharedPref.energy}</CardChip>}
             {sharedPref.timeOfDay && <CardChip>{sharedPref.timeOfDay}</CardChip>}
             {sharedPref.activities?.slice(0, 2).map((a) => (
-              <CardChip key={a}>{activityLabel(a)}</CardChip>
+              <CardChip key={a}>{ACTIVITY_BY_ID[a]?.label ?? a}</CardChip>
             ))}
           </div>
         )}
@@ -97,7 +102,13 @@ export default function DateCard({ result }) {
         disabled={busy}
         className="w-full max-w-[315px] rounded-full bg-ink px-6 py-3.5 font-bold text-white transition hover:opacity-90 active:scale-[0.99] disabled:opacity-60"
       >
-        {busy ? 'Hazırlanıyor…' : '📸 Kartı indir & paylaş'}
+        {busy ? (
+          'Hazırlanıyor…'
+        ) : (
+          <span className="inline-flex items-center gap-2">
+            <Download size={17} strokeWidth={2.4} /> Kartı indir & paylaş
+          </span>
+        )}
       </button>
     </div>
   )

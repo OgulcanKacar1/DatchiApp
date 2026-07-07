@@ -1,7 +1,10 @@
 // Ortak tercih formu — CLAUDE.md §6.1 (Answer) — iki taraf da bunu doldurur.
 // Firebase'den bağımsız: onSubmit(answer) ile toplanan Answer'ı dışarı verir.
 import { useState } from 'react'
+import { motion } from 'motion/react'
+import { MapPin, Loader2, Plus, Check } from 'lucide-react'
 import { ACTIVITIES } from '../data/activities.js'
+import { ACTIVITY_ICON, ENERGY_ICON, TIME_ICON } from '../data/icons.jsx'
 
 const BUDGETS = [
   { value: 1, label: '₺', hint: 'Uygun' },
@@ -10,24 +13,37 @@ const BUDGETS = [
 ]
 
 const ENERGY = [
-  { value: 'sakin', label: 'Sakin', emoji: '🌙' },
-  { value: 'hareketli', label: 'Hareketli', emoji: '⚡' },
+  { value: 'sakin', label: 'Sakin' },
+  { value: 'hareketli', label: 'Hareketli' },
 ]
 
 const TIME_OF_DAY = [
-  { value: 'gündüz', label: 'Gündüz', emoji: '☀️' },
-  { value: 'akşam', label: 'Akşam', emoji: '🌆' },
+  { value: 'gündüz', label: 'Gündüz' },
+  { value: 'akşam', label: 'Akşam' },
 ]
 
-// Küçük yardımcı: seçili duruma göre buton stilini üretir
+// Seçili duruma göre pill stili — seçilmeyen "krem", seçili "coral"
 function pill(active) {
   return [
-    'rounded-2xl border px-4 py-3 text-sm font-bold transition active:scale-[0.98]',
+    'flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-bold transition-colors',
     active
-      ? 'border-brand-400 bg-brand-50 text-brand-700 shadow-[0_2px_10px_-4px_rgba(255,77,109,0.4)]'
-      : 'border-sand-200 bg-white text-ink hover:border-brand-200',
+      ? 'border-brand-400 bg-brand-50 text-brand-700 shadow-[0_4px_14px_-6px_rgba(255,77,109,0.5)]'
+      : 'border-sand-200 bg-sand-100/70 text-ink hover:border-brand-200 hover:bg-white',
   ].join(' ')
 }
+
+// Sırayla belirme (stagger) için motion varyantları
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
+}
+const item = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
+}
+
+// Tıklanınca hafif "zıpla"
+const tap = { scale: 0.95 }
 
 export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
   const [budget, setBudget] = useState(null)
@@ -54,10 +70,7 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
     setLocState('loading')
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setLocation({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        })
+        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
         setLocState('idle')
       },
       () => setLocState('error'),
@@ -65,7 +78,6 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
     )
   }
 
-  // Zorunlu alanlar dolmadan gönderime izin verme
   const isValid =
     budget !== null &&
     activities.length > 0 &&
@@ -84,162 +96,184 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-7">
+    <motion.form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-6"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       {/* Bütçe */}
-      <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-ink">
-          Bütçe
-        </legend>
-        <div className="grid grid-cols-3 gap-2">
+      <motion.fieldset variants={item}>
+        <Legend>Bütçe</Legend>
+        <div className="grid grid-cols-3 gap-2.5">
           {BUDGETS.map((b) => (
-            <button
+            <motion.button
               key={b.value}
               type="button"
+              whileTap={tap}
               onClick={() => setBudget(b.value)}
-              className={pill(budget === b.value)}
+              className={pill(budget === b.value) + ' flex-col !gap-0.5 py-3.5'}
             >
-              <span className="block text-base">{b.label}</span>
-              <span className="mt-0.5 block text-xs text-muted">
-                {b.hint}
-              </span>
-            </button>
+              <span className="text-base">{b.label}</span>
+              <span className="text-xs font-semibold text-muted">{b.hint}</span>
+            </motion.button>
           ))}
         </div>
-      </fieldset>
+      </motion.fieldset>
 
       {/* Aktiviteler (çoklu) */}
-      <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-ink">
-          Ne yapmak istersin?{' '}
-          <span className="font-normal text-muted">(birden fazla)</span>
-        </legend>
-        <div className="flex flex-wrap gap-2">
-          {ACTIVITIES.map((a) => (
-            <button
-              key={a.id}
-              type="button"
-              onClick={() => toggleActivity(a.id)}
-              className={pill(activities.includes(a.id))}
-            >
-              <span className="mr-1">{a.emoji}</span>
-              {a.label}
-            </button>
-          ))}
+      <motion.fieldset variants={item}>
+        <Legend hint="(birden fazla)">Ne yapmak istersin?</Legend>
+        <div className="flex flex-wrap gap-2.5">
+          {ACTIVITIES.map((a) => {
+            const Icon = ACTIVITY_ICON[a.id]
+            const active = activities.includes(a.id)
+            return (
+              <motion.button
+                key={a.id}
+                type="button"
+                whileTap={tap}
+                onClick={() => toggleActivity(a.id)}
+                className={pill(active)}
+              >
+                {Icon && <Icon size={16} strokeWidth={2.2} />}
+                {a.label}
+              </motion.button>
+            )
+          })}
         </div>
-      </fieldset>
+      </motion.fieldset>
 
       {/* Enerji */}
-      <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-ink">
-          Enerji
-        </legend>
-        <div className="grid grid-cols-2 gap-2">
-          {ENERGY.map((e) => (
-            <button
-              key={e.value}
-              type="button"
-              onClick={() => setEnergy(e.value)}
-              className={pill(energy === e.value)}
-            >
-              <span className="mr-1">{e.emoji}</span>
-              {e.label}
-            </button>
-          ))}
+      <motion.fieldset variants={item}>
+        <Legend>Enerji</Legend>
+        <div className="grid grid-cols-2 gap-2.5">
+          {ENERGY.map((e) => {
+            const Icon = ENERGY_ICON[e.value]
+            return (
+              <motion.button
+                key={e.value}
+                type="button"
+                whileTap={tap}
+                onClick={() => setEnergy(e.value)}
+                className={pill(energy === e.value)}
+              >
+                <Icon size={16} strokeWidth={2.2} />
+                {e.label}
+              </motion.button>
+            )
+          })}
         </div>
-      </fieldset>
+      </motion.fieldset>
 
       {/* Zaman */}
-      <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-ink">
-          Ne zaman?
-        </legend>
-        <div className="grid grid-cols-2 gap-2">
-          {TIME_OF_DAY.map((t) => (
-            <button
-              key={t.value}
-              type="button"
-              onClick={() => setTimeOfDay(t.value)}
-              className={pill(timeOfDay === t.value)}
-            >
-              <span className="mr-1">{t.emoji}</span>
-              {t.label}
-            </button>
-          ))}
+      <motion.fieldset variants={item}>
+        <Legend>Ne zaman?</Legend>
+        <div className="grid grid-cols-2 gap-2.5">
+          {TIME_OF_DAY.map((t) => {
+            const Icon = TIME_ICON[t.value]
+            return (
+              <motion.button
+                key={t.value}
+                type="button"
+                whileTap={tap}
+                onClick={() => setTimeOfDay(t.value)}
+                className={pill(timeOfDay === t.value)}
+              >
+                <Icon size={16} strokeWidth={2.2} />
+                {t.label}
+              </motion.button>
+            )
+          })}
         </div>
-      </fieldset>
+      </motion.fieldset>
 
       {/* Konum */}
-      <fieldset>
-        <legend className="mb-2 text-sm font-semibold text-ink">
-          Konum
-        </legend>
-        <button
+      <motion.fieldset variants={item}>
+        <Legend>Konum</Legend>
+        <motion.button
           type="button"
+          whileTap={tap}
           onClick={requestLocation}
-          className={pill(location !== null) + ' w-full'}
+          className={pill(location !== null) + ' w-full py-4'}
         >
-          {locState === 'loading'
-            ? 'Konum alınıyor…'
-            : location
-              ? '📍 Konum alındı'
-              : '📍 Konumumu kullan'}
-        </button>
+          {locState === 'loading' ? (
+            <>
+              <Loader2 size={16} className="animate-spin" /> Konum alınıyor…
+            </>
+          ) : location ? (
+            <>
+              <Check size={16} strokeWidth={2.5} /> Konum alındı
+            </>
+          ) : (
+            <>
+              <MapPin size={16} strokeWidth={2.2} /> Konumumu kullan
+            </>
+          )}
+        </motion.button>
         {locState === 'error' && (
-          <p className="mt-2 text-xs text-brand-500">
+          <p className="mt-2 text-xs font-semibold text-brand-500">
             Konuma erişilemedi. Tarayıcı iznini kontrol et.
           </p>
         )}
         <p className="mt-2 text-xs text-muted">
           Konumun sadece orta noktayı bulmak için kullanılır, kaydedilmez.
         </p>
-      </fieldset>
+      </motion.fieldset>
 
       {/* Joker (opsiyonel) */}
-      <fieldset>
+      <motion.fieldset variants={item}>
         {!jokerOpen ? (
           <button
             type="button"
             onClick={() => setJokerOpen(true)}
-            className="text-sm font-medium text-brand-600 hover:text-brand-700"
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700"
           >
-            + Joker soru ekle (opsiyonel)
+            <Plus size={16} strokeWidth={2.5} /> Joker soru ekle (opsiyonel)
           </button>
         ) : (
-          <div className="flex flex-col gap-2">
-            <legend className="text-sm font-semibold text-ink">
-              Joker{' '}
-              <span className="font-normal text-muted">
-                (sadece eğlence, sonucu etkilemez)
-              </span>
-            </legend>
+          <div className="flex flex-col gap-2.5">
+            <Legend hint="(sadece eğlence, sonucu etkilemez)">Joker</Legend>
             <input
               value={jokerQ}
               onChange={(e) => setJokerQ(e.target.value)}
               placeholder="Soru: Ananaslı pizza?"
-              className="rounded-2xl border border-sand-200 px-4 py-3 text-sm outline-none focus:border-brand-400"
+              className="rounded-2xl border border-sand-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-400"
             />
             <input
               value={jokerA}
               onChange={(e) => setJokerA(e.target.value)}
-              placeholder="Senin cevabın: Evet 🍍"
-              className="rounded-2xl border border-sand-200 px-4 py-3 text-sm outline-none focus:border-brand-400"
+              placeholder="Senin cevabın: Evet"
+              className="rounded-2xl border border-sand-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-400"
             />
           </div>
         )}
-      </fieldset>
+      </motion.fieldset>
 
-      <button
+      <motion.button
+        variants={item}
         type="submit"
         disabled={!isValid}
-        className="mt-2 w-full rounded-full bg-brand-500 px-6 py-4 text-lg font-bold text-white shadow-[var(--shadow-soft)] transition hover:bg-brand-600 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+        whileTap={isValid ? { scale: 0.98 } : undefined}
+        className="mt-1 w-full rounded-full bg-brand-500 px-6 py-4 text-lg font-bold text-white shadow-[var(--shadow-soft)] transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:bg-sand-300 disabled:text-muted disabled:shadow-none"
       >
         {submitLabel}
-      </button>
+      </motion.button>
       {!isValid && (
-        <p className="-mt-4 text-center text-xs text-muted">
+        <p className="-mt-3 text-center text-xs text-muted">
           Bütçe, en az bir aktivite, enerji, zaman ve konum gerekli.
         </p>
       )}
-    </form>
+    </motion.form>
+  )
+}
+
+function Legend({ children, hint }) {
+  return (
+    <legend className="mb-2.5 text-sm font-bold text-ink">
+      {children}
+      {hint && <span className="ml-1 font-medium text-muted">{hint}</span>}
+    </legend>
   )
 }
