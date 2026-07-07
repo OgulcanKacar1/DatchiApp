@@ -30,7 +30,7 @@ export function useSession(sessionId) {
           notFound: false,
           status: data.status,
           result: data.result ?? null,
-          hasGuest: data.guestAnswers != null,
+          hasGuest: data.guestSubmitted === true,
           creatorName: data.creatorName ?? null,
           guestName: data.guestName ?? null,
           guestActive: data.guestActive ?? false,
