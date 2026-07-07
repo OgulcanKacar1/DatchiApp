@@ -17,6 +17,13 @@ dist-ssr
 .env.*
 !.env.example
 
+# Firebase yerel çıktıları
+.firebase/
+firebase-debug.log
+firestore-debug.log
+.emulator.log
+ui-debug.log
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

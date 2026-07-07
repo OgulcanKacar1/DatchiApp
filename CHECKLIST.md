@@ -82,16 +82,16 @@ Branch: `feat/interaction`
 
 ## 6. Sertleştirme & Deploy
 Branch: `feat/hardening`
-- [ ] ⚠️ KRİTİK (§5 adalet): cevapları client'ın okuyamayacağı yere taşı.
-      Firestore doküman okuması alan-bazlı gizlenemez → `creatorAnswers`/`guestAnswers`
-      ayrı alt-koleksiyona (`sessions/{id}/answers/*`) taşınmalı, ana dokümanda sadece
-      herkese açık alanlar (status, isimler, result, guestActive) kalmalı. Yoksa guest,
-      göndermeden creator'ın cevabını onSnapshot ile görebilir.
-- [ ] `firestore.rules` — sadece ilgili taraflar yazar, `answers/*` client'a okuma kapalı,
-      `result`/`status` client'a yazma kapalı (§5)
-- [ ] TTL policy — `expireAt` alanına 24s otomatik silme (§2, §6.3)
-- [ ] reCAPTCHA (görünmez) + rate limiting (§5)
-- [ ] `firebase.json` + Hosting deploy
+- [x] ⚠️ KRİTİK (§5 adalet): cevaplar `sessions/{id}/private/{creator|guest}`'e taşındı;
+      ana doküman yalnızca herkese açık alanları taşır. Emülatörde doğrulandı.
+- [x] `firestore.rules` — private client'a okuma kapalı, `result`/`status` client'a yazma
+      kapalı, sadece presence/isim güncellenebilir (§5). 6/6 kural testi geçti.
+- [x] Pipeline emülatör testi — özel cevaplar → matchDate → result (yeşil)
+- [x] `firebase.json` Hosting + SPA rewrite yapılandırması
+- [ ] TTL policy — Firestore Console → `expireAt` alanına 24s (KULLANICI, tek tık)
+- [ ] Firebase App Check + reCAPTCHA — abuse koruması (KULLANICI: site key + kod)
+- [ ] Blaze planına geç (KULLANICI — Function deploy için şart)
+- [ ] `npm run build` + `firebase deploy` → datchiapp.web.app canlı
 - [ ] Domain `datchi.app` bağla (opsiyonel, sonra)
 - [ ] SEO/meta kontrolü ("Datchi" tek başına kalmasın, §3)
 
