@@ -18,7 +18,7 @@ export default function JokerReveal({ jokerReveal }) {
       <p className="mt-1 font-medium text-ink">{question}</p>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <div className="rounded-xl bg-brand-50 p-3 text-center">
-          <p className="text-xs text-rose-400">Sen</p>
+          <p className="text-xs font-semibold text-brand-400">Sen</p>
           <p className="mt-1 font-semibold text-brand-700">
             {creator?.answer ?? '—'}
           </p>

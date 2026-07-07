@@ -2,8 +2,10 @@
 // useSession listener'ı status "ready" olunca result'ı anında düşürür.
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { MapPin, ArrowRight, Share2 } from 'lucide-react'
 import { useSession } from '../hooks/useSession.js'
-import { activityLabel } from '../data/activities.js'
+import { ACTIVITY_BY_ID } from '../data/activities.js'
+import { ACTIVITY_ICON } from '../data/icons.jsx'
 import JokerReveal from '../components/JokerReveal.jsx'
 import DateCard from '../components/DateCard.jsx'
 
@@ -79,14 +81,15 @@ export default function Result() {
           <p className="text-xs font-semibold uppercase tracking-wide text-muted">
             Önerilen mekân
           </p>
-          <p className="mt-1 text-lg font-semibold text-ink">
-            📍 {venue.name}
+          <p className="mt-1 flex items-center gap-1.5 text-lg font-semibold text-ink">
+            <MapPin size={18} strokeWidth={2.4} className="text-brand-500" />
+            {venue.name}
           </p>
           {venue.address && (
             <p className="mt-0.5 text-sm text-muted">{venue.address}</p>
           )}
-          <p className="mt-3 text-sm font-medium text-brand-600">
-            Haritada aç →
+          <p className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-brand-600">
+            Haritada aç <ArrowRight size={15} />
           </p>
           {venue._stub && (
             <p className="mt-2 text-xs text-amber-600">
@@ -109,9 +112,15 @@ export default function Result() {
             <Chip>Bütçe {BUDGET_LABEL[sharedPref.budget]}</Chip>
             {sharedPref.energy && <Chip>{sharedPref.energy}</Chip>}
             {sharedPref.timeOfDay && <Chip>{sharedPref.timeOfDay}</Chip>}
-            {sharedPref.activities?.map((a) => (
-              <Chip key={a}>{activityLabel(a)}</Chip>
-            ))}
+            {sharedPref.activities?.map((a) => {
+              const Icon = ACTIVITY_ICON[a]
+              return (
+                <Chip key={a}>
+                  {Icon && <Icon size={14} strokeWidth={2.2} />}
+                  {ACTIVITY_BY_ID[a]?.label ?? a}
+                </Chip>
+              )
+            })}
           </div>
           <p className="mt-2 text-xs text-muted">
             {sharedPref.activitiesMode === 'intersection'
@@ -134,15 +143,15 @@ export default function Result() {
           <button
             type="button"
             onClick={() => setShowCard(true)}
-            className="w-full rounded-xl border border-brand-200 bg-brand-50 px-6 py-3 font-medium text-brand-700 transition hover:bg-brand-100"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-6 py-3.5 font-bold text-brand-700 transition hover:bg-brand-100"
           >
-            💌 Bu rotayı kart olarak paylaş
+            <Share2 size={17} strokeWidth={2.3} /> Bu rotayı kart olarak paylaş
           </button>
         )}
       </div>
 
-      <p className="mt-2 text-center text-xs text-muted">
-        İyi eğlenceler ✨ · Datchi
+      <p className="mt-2 flex items-center justify-center gap-1 text-center text-xs text-muted">
+        İyi eğlenceler · Datchi
       </p>
     </main>
   )
@@ -158,7 +167,7 @@ function Centered({ children }) {
 
 function Chip({ children }) {
   return (
-    <span className="rounded-full border border-sand-200 bg-white px-3 py-1 text-ink">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-sand-200 bg-white px-3 py-1 font-semibold text-ink">
       {children}
     </span>
   )
