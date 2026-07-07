@@ -1,8 +1,14 @@
-// Oturum oluştur / katıl yardımcıları — CLAUDE.md §6.3, §10 adım 3-4
+// Oturum oluştur / katıl yardımcıları — CLAUDE.md §6.3, §10 adım 3-4, §5
+//
+// GİZLİLİK MİMARİSİ (§5): Ham cevaplar ana dokümanda TUTULMAZ. Firestore doküman
+// okuması alan-bazlı gizlenemediği için cevaplar `sessions/{id}/private/{creator|guest}`
+// alt-koleksiyonuna yazılır; güvenlik kuralları bunları client okumasına kapatır.
+// Ana doküman yalnızca herkese açık alanları taşır (durum, isimler, presence, result).
 import {
   collection,
   addDoc,
   doc,
+  setDoc,
   getDoc,
   updateDoc,
   serverTimestamp,
@@ -13,40 +19,43 @@ import { db } from './firebase.js'
 const SESSIONS = 'sessions'
 const TTL_HOURS = 24
 
-// Magic link'i domain'den bağımsız üret (§3: koda domain gömme)
 export function magicLinkFor(sessionId) {
   return `${window.location.origin}/s/${sessionId}`
 }
 
 // İsim: opsiyonel, herkese açık okunur (adalet kuralını bozmaz — cevap değil).
-// Kısa tut, boşsa null yaz.
 function cleanName(name) {
   const n = (name ?? '').trim()
   return n ? n.slice(0, 24) : null
 }
 
-// A kişisi: oturum aç, creatorAnswers yaz, status "waiting"
-// result'ı CLIENT YAZMAZ (§5) — sadece null olarak başlatılır.
+// Özel cevap dokümanı referansı: sessions/{id}/private/{who}
+function answerRef(sessionId, who) {
+  return doc(db, SESSIONS, sessionId, 'private', who)
+}
+
+// A kişisi: herkese açık oturum + özel creator cevabı. Cevap ana dokümanda DEĞİL.
 export async function createSession(creatorAnswers, creatorName) {
   const expireAt = Timestamp.fromDate(
     new Date(Date.now() + TTL_HOURS * 60 * 60 * 1000),
   )
+  // 1) Herkese açık oturum dokümanı
   const ref = await addDoc(collection(db, SESSIONS), {
     createdAt: serverTimestamp(),
     expireAt, // TTL policy bu alana bağlanır (§6.3)
     status: 'waiting',
-    creatorName: cleanName(creatorName), // opsiyonel, gösterim için
+    creatorName: cleanName(creatorName),
     guestName: null,
     guestActive: false, // guest formu açtı mı ("dolduruyor" göstergesi)
-    creatorAnswers,
-    guestAnswers: null,
-    result: null,
+    guestSubmitted: false, // guest cevabını gönderdi mi
+    result: null, // yalnızca Cloud Function yazar (§5)
   })
+  // 2) Creator cevabı — özel, client okuyamaz
+  await setDoc(answerRef(ref.id, 'creator'), { answer: creatorAnswers })
   return { sessionId: ref.id, magicLink: magicLinkFor(ref.id) }
 }
 
-// Oturumun var/geçerli olup olmadığını kontrol et (Join açılışında)
-// creatorName'i de döndür → "Ayşe seni davet etti" kişisel metni için.
+// Join açılışında: oturum var/geçerli mi + creatorName (kişisel davet metni için)
 export async function getSessionMeta(sessionId) {
   const snap = await getDoc(doc(db, SESSIONS, sessionId))
   if (!snap.exists()) return { exists: false }
@@ -54,13 +63,12 @@ export async function getSessionMeta(sessionId) {
   return {
     exists: true,
     status: data.status,
-    alreadyAnswered: data.guestAnswers != null,
+    alreadyAnswered: data.guestSubmitted === true,
     creatorName: data.creatorName ?? null,
   }
 }
 
-// Guest formu AÇTIĞINDA çağrılır (henüz göndermeden) → creator "dolduruyor" görür.
-// Cevap yazmaz, sadece presence bayrağı (§5 adaletini bozmaz).
+// Guest formu AÇTIĞINDA (henüz göndermeden) → creator "dolduruyor" görür.
 export async function markGuestActive(sessionId) {
   try {
     await updateDoc(doc(db, SESSIONS, sessionId), { guestActive: true })
@@ -69,10 +77,12 @@ export async function markGuestActive(sessionId) {
   }
 }
 
-// B kişisi: guestAnswers + guestName yaz. status'u Function "ready" yapar (§5).
+// B kişisi: özel guest cevabı + herkese açık isim/gönderildi bayrağı.
+// Cevabın yazılması Cloud Function'ı tetikler; status'u Function "ready" yapar (§5).
 export async function submitGuestAnswers(sessionId, guestAnswers, guestName) {
+  await setDoc(answerRef(sessionId, 'guest'), { answer: guestAnswers })
   await updateDoc(doc(db, SESSIONS, sessionId), {
-    guestAnswers,
     guestName: cleanName(guestName),
+    guestSubmitted: true,
   })
 }

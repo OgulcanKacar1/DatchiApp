@@ -1,6 +1,8 @@
-// Datchi Cloud Functions — CLAUDE.md §10 adım 5
-// matchDate: iki cevap da gelince tetiklenir, result'ı yazan TEK yer (§5).
-import { onDocumentUpdated } from 'firebase-functions/v2/firestore'
+// Datchi Cloud Functions — CLAUDE.md §10 adım 5, §5
+// matchDate: guest özel cevabı yazılınca tetiklenir; result'ı yazan TEK yer (§5).
+// Cevaplar sessions/{id}/private/{creator|guest} altında; SADECE admin (bu Function)
+// okur, client okuyamaz. Sonuç ana dokümana yazılır.
+import { onDocumentCreated } from 'firebase-functions/v2/firestore'
 import { initializeApp } from 'firebase-admin/app'
 import { getFirestore, FieldValue } from 'firebase-admin/firestore'
 
@@ -10,25 +12,31 @@ import { DATE_TEMPLATES } from './lib/dateTemplates.js'
 
 initializeApp()
 
-export const matchDate = onDocumentUpdated(
-  { document: 'sessions/{sessionId}', region: 'europe-west3' },
+export const matchDate = onDocumentCreated(
+  { document: 'sessions/{sessionId}/private/guest', region: 'europe-west3' },
   async (event) => {
-    const after = event.data?.after?.data()
-    if (!after) return
+    const sessionId = event.params.sessionId
+    const db = getFirestore()
 
-    // Sadece: iki cevap da var, henüz sonuç yok. (Kendi yazımızla tekrar
-    // tetiklenip sonsuz döngüye girmeyi de bu koşul engeller.)
-    if (!after.creatorAnswers || !after.guestAnswers) return
-    if (after.status === 'ready' || after.result) return
+    const sessionRef = db.doc(`sessions/${sessionId}`)
+    const session = (await sessionRef.get()).data()
+    if (!session) return
+    // Idempotent: zaten hesaplandıysa çık
+    if (session.status === 'ready' || session.result) return
 
-    const creator = after.creatorAnswers
-    const guest = after.guestAnswers
+    // Her iki özel cevabı da oku (client bunları okuyamaz)
+    const [creatorSnap, guestSnap] = await Promise.all([
+      db.doc(`sessions/${sessionId}/private/creator`).get(),
+      db.doc(`sessions/${sessionId}/private/guest`).get(),
+    ])
+    const creator = creatorSnap.data()?.answer
+    const guest = guestSnap.data()?.answer
+    if (!creator || !guest) return
 
     // 1) Eşleştir (§7.1/§7.2)
     const { shared, picked } = matchTemplate(creator, guest, DATE_TEMPLATES)
     if (!picked) {
-      // Teorik olarak nadir (birleşime düşünce hep bir eşleşme olur) ama garanti
-      console.warn('[matchDate] uygun şablon bulunamadı', event.params.sessionId)
+      console.warn('[matchDate] uygun şablon bulunamadı', sessionId)
       return
     }
 
@@ -43,20 +51,10 @@ export const matchDate = onDocumentUpdated(
         : null
 
     // 4) Result yaz + status "ready" (real-time reveal buna tetiklenir)
-    const result = {
-      template: picked.template,
-      venue,
-      midpoint,
-      jokerReveal,
-      sharedPref: shared, // reveal ekranında "neden bu?" göstermek için
-    }
-
-    await getFirestore()
-      .doc(`sessions/${event.params.sessionId}`)
-      .update({
-        result,
-        status: 'ready',
-        matchedAt: FieldValue.serverTimestamp(),
-      })
+    await sessionRef.update({
+      result: { template: picked.template, venue, midpoint, jokerReveal, sharedPref: shared },
+      status: 'ready',
+      matchedAt: FieldValue.serverTimestamp(),
+    })
   },
 )

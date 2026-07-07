@@ -1,15 +1,42 @@
 rules_version = '2';
 
-// ⚠️ GEÇİCİ GELİŞTİRME KURALLARI — CLAUDE.md §5 / CHECKLIST Bölüm 5'te
-// gerçek kurallarla değiştirilecek:
-//   - result alanını client YAZAMAZ (sadece Cloud Function)
-//   - bir oturuma sadece ilgili taraflar yazabilir
-//   - expireAt geçmiş oturumlar okunamaz
-// Şu an console'daki "test mode" ile aynı: açık. CANLIYA BÖYLE ÇIKMA.
+// Datchi güvenlik kuralları — CLAUDE.md §5
+// Özet:
+//  - Ana oturum dokümanı herkese açık okunur (gizli veri içermez).
+//  - Client oturumu oluşturabilir; ama result/status'u YAZAMAZ (yalnızca Cloud Function).
+//  - Client sadece presence/isim alanlarını güncelleyebilir.
+//  - Ham cevaplar sessions/{id}/private/* altında; client OKUYAMAZ (adalet, §5).
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
+
+    match /sessions/{sessionId} {
+      // Oturum dokümanı herkese açık (durum, isimler, presence, result)
+      allow read: if true;
+
+      // Oluşturma: geçerli, boş bir "waiting" oturum
+      allow create: if request.resource.data.status == 'waiting'
+                    && request.resource.data.result == null
+                    && request.resource.data.guestSubmitted == false
+                    && request.resource.data.keys().hasAll(['createdAt', 'expireAt', 'status']);
+
+      // Güncelleme: client SADECE presence/isim alanlarına dokunabilir.
+      // result ve status'u ASLA client yazamaz (yalnızca Function — admin kuralları atlar).
+      allow update: if request.resource.data.diff(resource.data)
+                          .affectedKeys().hasOnly(['guestName', 'guestActive', 'guestSubmitted'])
+                    && request.resource.data.status == resource.data.status
+                    && request.resource.data.result == resource.data.result;
+
+      allow delete: if false;
+
+      // Ham cevaplar — client OKUYAMAZ; sadece admin (Cloud Function) okur.
+      match /private/{who} {
+        allow read: if false;
+        // Her taraf kendi cevabını bir kez yazabilir (create; var olan doküman
+        // üzerine create başarısız olur → tek yazım). Oturum var olmalı.
+        allow create: if (who == 'creator' || who == 'guest')
+                      && exists(/databases/$(database)/documents/sessions/$(sessionId));
+        allow update, delete: if false;
+      }
     }
   }
 }
