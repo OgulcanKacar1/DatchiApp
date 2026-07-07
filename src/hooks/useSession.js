@@ -31,6 +31,9 @@ export function useSession(sessionId) {
           status: data.status,
           result: data.result ?? null,
           hasGuest: data.guestAnswers != null,
+          creatorName: data.creatorName ?? null,
+          guestName: data.guestName ?? null,
+          guestActive: data.guestActive ?? false,
         })
       },
       (err) => setState({ loading: false, error: err }),

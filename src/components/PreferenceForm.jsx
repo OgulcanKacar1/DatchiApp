@@ -45,7 +45,13 @@ const item = {
 // Tıklanınca hafif "zıpla"
 const tap = { scale: 0.95 }
 
-export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
+export default function PreferenceForm({
+  submitLabel = 'Gönder',
+  nameLabel,
+  namePlaceholder = 'Adın',
+  onSubmit,
+}) {
+  const [name, setName] = useState('')
   const [budget, setBudget] = useState(null)
   const [activities, setActivities] = useState([])
   const [energy, setEnergy] = useState(null)
@@ -92,7 +98,10 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
       jokerOpen && jokerQ.trim() && jokerA.trim()
         ? { question: jokerQ.trim(), answer: jokerA.trim() }
         : null
-    onSubmit({ budget, activities, energy, timeOfDay, location, joker })
+    onSubmit({
+      name: name.trim() || null,
+      answer: { budget, activities, energy, timeOfDay, location, joker },
+    })
   }
 
   return (
@@ -103,6 +112,20 @@ export default function PreferenceForm({ submitLabel = 'Gönder', onSubmit }) {
       initial="hidden"
       animate="show"
     >
+      {/* İsim (opsiyonel) — sadece nameLabel verilirse */}
+      {nameLabel && (
+        <motion.fieldset variants={item}>
+          <Legend hint="(opsiyonel)">{nameLabel}</Legend>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={24}
+            placeholder={namePlaceholder}
+            className="w-full rounded-2xl border border-sand-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-400"
+          />
+        </motion.fieldset>
+      )}
+
       {/* Bütçe */}
       <motion.fieldset variants={item}>
         <Legend>Bütçe</Legend>

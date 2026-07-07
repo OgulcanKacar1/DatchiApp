@@ -8,7 +8,7 @@ import { ACTIVITY_BY_ID } from '../data/activities.js'
 
 const BUDGET_LABEL = { 1: '₺', 2: '₺₺', 3: '₺₺₺' }
 
-export default function DateCard({ result }) {
+export default function DateCard({ result, couple }) {
   const cardRef = useRef(null)
   const [busy, setBusy] = useState(false)
 
@@ -55,7 +55,7 @@ export default function DateCard({ result }) {
         </div>
 
         <p className="mt-8 text-sm font-medium uppercase tracking-widest text-white/70">
-          İlk buluşma rotamız
+          {couple ? `${couple} · ilk buluşma` : 'İlk buluşma rotamız'}
         </p>
 
         <h2 className="mt-2 font-display text-[34px] font-semibold leading-[1.05] tracking-tight">

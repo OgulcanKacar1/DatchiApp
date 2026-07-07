@@ -18,9 +18,16 @@ export function magicLinkFor(sessionId) {
   return `${window.location.origin}/s/${sessionId}`
 }
 
+// İsim: opsiyonel, herkese açık okunur (adalet kuralını bozmaz — cevap değil).
+// Kısa tut, boşsa null yaz.
+function cleanName(name) {
+  const n = (name ?? '').trim()
+  return n ? n.slice(0, 24) : null
+}
+
 // A kişisi: oturum aç, creatorAnswers yaz, status "waiting"
 // result'ı CLIENT YAZMAZ (§5) — sadece null olarak başlatılır.
-export async function createSession(creatorAnswers) {
+export async function createSession(creatorAnswers, creatorName) {
   const expireAt = Timestamp.fromDate(
     new Date(Date.now() + TTL_HOURS * 60 * 60 * 1000),
   )
@@ -28,6 +35,9 @@ export async function createSession(creatorAnswers) {
     createdAt: serverTimestamp(),
     expireAt, // TTL policy bu alana bağlanır (§6.3)
     status: 'waiting',
+    creatorName: cleanName(creatorName), // opsiyonel, gösterim için
+    guestName: null,
+    guestActive: false, // guest formu açtı mı ("dolduruyor" göstergesi)
     creatorAnswers,
     guestAnswers: null,
     result: null,
@@ -36,6 +46,7 @@ export async function createSession(creatorAnswers) {
 }
 
 // Oturumun var/geçerli olup olmadığını kontrol et (Join açılışında)
+// creatorName'i de döndür → "Ayşe seni davet etti" kişisel metni için.
 export async function getSessionMeta(sessionId) {
   const snap = await getDoc(doc(db, SESSIONS, sessionId))
   if (!snap.exists()) return { exists: false }
@@ -44,11 +55,24 @@ export async function getSessionMeta(sessionId) {
     exists: true,
     status: data.status,
     alreadyAnswered: data.guestAnswers != null,
+    creatorName: data.creatorName ?? null,
   }
 }
 
-// B kişisi: guestAnswers yaz. status'u Function "ready" yapar (§5),
-// client burada status'a dokunmaz.
-export async function submitGuestAnswers(sessionId, guestAnswers) {
-  await updateDoc(doc(db, SESSIONS, sessionId), { guestAnswers })
+// Guest formu AÇTIĞINDA çağrılır (henüz göndermeden) → creator "dolduruyor" görür.
+// Cevap yazmaz, sadece presence bayrağı (§5 adaletini bozmaz).
+export async function markGuestActive(sessionId) {
+  try {
+    await updateDoc(doc(db, SESSIONS, sessionId), { guestActive: true })
+  } catch {
+    // presence kritik değil; hata sessizce yut
+  }
+}
+
+// B kişisi: guestAnswers + guestName yaz. status'u Function "ready" yapar (§5).
+export async function submitGuestAnswers(sessionId, guestAnswers, guestName) {
+  await updateDoc(doc(db, SESSIONS, sessionId), {
+    guestAnswers,
+    guestName: cleanName(guestName),
+  })
 }

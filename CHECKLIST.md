@@ -67,13 +67,28 @@ Branch: `feat/design` · Yön: **sıcak & flörtöz** (rose/coral + krem, yuvarl
 - [x] DateCard görsel cila — sıcak coral gradyan + display font
 - [x] Marka wordmark (💌 Datchi, Fraunces)
 - [x] Mobil ince ayar (mobile-first, 375px doğrulandı)
-- [ ] Create/link "hazır" ekranını ayrıca gözden geçir (emerald → warm?)
+- [x] Create/link "hazır" ekranı warm tona geçti (bekleme odasına dönüştü)
 - [ ] (Opsiyonel) dark mode
 - [ ] Reveal ekranını canlı önizlemede bir kez görsel doğrula
 
+## 5.5 İki Taraf Etkileşimi
+Branch: `feat/interaction`
+- [x] Opsiyonel isimler (creatorName / guestName) — hesap değil, 24s'te silinir
+- [x] Canlı bekleme odası (creator) — link paylaş + durum + hazır olunca oto-reveal
+- [x] "Karşı taraf dolduruyor" göstergesi (guestActive presence bayrağı)
+- [x] Kişisel davet metni (Join: "[Ad] seni davet etti")
+- [x] Reveal + DateCard'da çift ismi ("Ayşe & Mehmet")
+- [ ] Emülatörle uçtan uca test (isim → bekleme → presence → reveal)
+
 ## 6. Sertleştirme & Deploy
 Branch: `feat/hardening`
-- [ ] `firestore.rules` — sadece ilgili taraflar yazar, `result` client'a kapalı (§5)
+- [ ] ⚠️ KRİTİK (§5 adalet): cevapları client'ın okuyamayacağı yere taşı.
+      Firestore doküman okuması alan-bazlı gizlenemez → `creatorAnswers`/`guestAnswers`
+      ayrı alt-koleksiyona (`sessions/{id}/answers/*`) taşınmalı, ana dokümanda sadece
+      herkese açık alanlar (status, isimler, result, guestActive) kalmalı. Yoksa guest,
+      göndermeden creator'ın cevabını onSnapshot ile görebilir.
+- [ ] `firestore.rules` — sadece ilgili taraflar yazar, `answers/*` client'a okuma kapalı,
+      `result`/`status` client'a yazma kapalı (§5)
 - [ ] TTL policy — `expireAt` alanına 24s otomatik silme (§2, §6.3)
 - [ ] reCAPTCHA (görünmez) + rate limiting (§5)
 - [ ] `firebase.json` + Hosting deploy
