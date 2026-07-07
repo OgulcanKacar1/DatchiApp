@@ -88,6 +88,7 @@ Branch: `feat/hardening`
       kapalı, sadece presence/isim güncellenebilir (§5). 6/6 kural testi geçti.
 - [x] Pipeline emülatör testi — özel cevaplar → matchDate → result (yeşil)
 - [x] `firebase.json` Hosting + SPA rewrite yapılandırması
+- [x] Güvenlik kuralları CANLIYA deploy edildi (test mode kapandı) ✓
 - [ ] TTL policy — Firestore Console → `expireAt` alanına 24s (KULLANICI, tek tık)
 - [ ] Firebase App Check + reCAPTCHA — abuse koruması (KULLANICI: site key + kod)
 - [ ] Blaze planına geç (KULLANICI — Function deploy için şart)
