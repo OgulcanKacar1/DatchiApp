@@ -37,7 +37,7 @@ export default function Join() {
 
   if (meta.loading) {
     return (
-      <main className="mx-auto flex min-h-svh max-w-md items-center justify-center px-6 text-neutral-500">
+      <main className="mx-auto flex min-h-svh max-w-md items-center justify-center px-6 text-muted">
         Yükleniyor…
       </main>
     )
@@ -47,10 +47,10 @@ export default function Join() {
   if (!meta.exists) {
     return (
       <main className="mx-auto flex min-h-svh max-w-md flex-col items-center justify-center gap-3 px-6 text-center">
-        <h1 className="text-2xl font-semibold text-neutral-900">
+        <h1 className="text-2xl font-semibold text-ink">
           Link geçersiz
         </h1>
-        <p className="text-neutral-500">
+        <p className="text-muted">
           Bu date oturumu bulunamadı veya süresi dolmuş (linkler 24 saat
           geçerli).
         </p>
@@ -62,11 +62,11 @@ export default function Join() {
   if (meta.alreadyAnswered) {
     return (
       <main className="mx-auto flex min-h-svh max-w-md flex-col items-center justify-center gap-3 px-6 text-center">
-        <p className="text-neutral-600">Bu oturuma zaten cevap verilmiş.</p>
+        <p className="text-muted">Bu oturuma zaten cevap verilmiş.</p>
         <button
           type="button"
           onClick={() => navigate(`/s/${sessionId}/result`)}
-          className="rounded-xl bg-rose-500 px-5 py-3 font-medium text-white hover:bg-rose-600"
+          className="rounded-xl bg-brand-500 px-5 py-3 font-medium text-white hover:bg-rose-600"
         >
           Sonucu gör
         </button>
@@ -77,14 +77,14 @@ export default function Join() {
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col gap-6 px-6 py-10">
       <header>
-        <h1 className="text-2xl font-semibold text-neutral-900">Sıra sende</h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <h1 className="text-2xl font-semibold text-ink">Sıra sende</h1>
+        <p className="mt-1 text-sm text-muted">
           Tercihlerini gir, ortak date rotanız birlikte belirsin.
         </p>
       </header>
 
       {error && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+        <div className="rounded-xl border border-brand-200 bg-brand-50 p-3 text-sm text-brand-700">
           {error}
         </div>
       )}

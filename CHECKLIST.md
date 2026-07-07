@@ -59,16 +59,17 @@ Branch: `feat/date-card`
 
 ## 5. Tasarım & Marka Cilası  ← ŞU AN
 Branch: `feat/design` · Yön: **sıcak & flörtöz** (rose/coral + krem, yuvarlak, samimi)
-- [ ] Tasarım sistemi: renk paleti + tipografi + spacing token'ları (index.css @theme)
-- [ ] Paylaşılan primitive'ler (Button, Card, Chip) tutarlı hale
-- [ ] Home (landing) — sıcak karşılama, marka, net CTA
-- [ ] PreferenceForm cilası — seçim durumları, mikro etkileşim
-- [ ] Create/link ekranı — paylaşma anını güzelleştir
-- [ ] Reveal ekranı estetiği — "büyü anı"nı güçlendir
-- [ ] DateCard görsel cila — screenshot'lanası hale
-- [ ] Logo / marka işareti (basit wordmark yeter)
-- [ ] Mobil ince ayar (birincil kitle telefondan girer)
+- [x] Tasarım sistemi: renk paleti + tipografi (Fraunces+Nunito) token'ları (index.css @theme)
+- [x] Paylaşılan primitive'ler (Button, Card, Chip, Eyebrow)
+- [x] Home (landing) — sıcak karşılama, marka, net CTA, 3 adım
+- [x] PreferenceForm cilası — coral seçim durumları, yumuşak pill'ler
+- [x] Reveal ekranı — display font başlık + warm palet
+- [x] DateCard görsel cila — sıcak coral gradyan + display font
+- [x] Marka wordmark (💌 Datchi, Fraunces)
+- [x] Mobil ince ayar (mobile-first, 375px doğrulandı)
+- [ ] Create/link "hazır" ekranını ayrıca gözden geçir (emerald → warm?)
 - [ ] (Opsiyonel) dark mode
+- [ ] Reveal ekranını canlı önizlemede bir kez görsel doğrula
 
 ## 6. Sertleştirme & Deploy
 Branch: `feat/hardening`

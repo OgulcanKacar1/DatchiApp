@@ -11,15 +11,15 @@ export default function JokerReveal({ jokerReveal }) {
   if (!question) return null
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
+    <div className="rounded-2xl border border-sand-200 bg-white p-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted">
         Joker
       </p>
-      <p className="mt-1 font-medium text-neutral-900">{question}</p>
+      <p className="mt-1 font-medium text-ink">{question}</p>
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="rounded-xl bg-rose-50 p-3 text-center">
+        <div className="rounded-xl bg-brand-50 p-3 text-center">
           <p className="text-xs text-rose-400">Sen</p>
-          <p className="mt-1 font-semibold text-rose-700">
+          <p className="mt-1 font-semibold text-brand-700">
             {creator?.answer ?? '—'}
           </p>
         </div>

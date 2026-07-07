@@ -21,10 +21,10 @@ export default function Result() {
   if (s.notFound) {
     return (
       <Centered>
-        <h1 className="text-2xl font-semibold text-neutral-900">
+        <h1 className="text-2xl font-semibold text-ink">
           Oturum bulunamadı
         </h1>
-        <p className="mt-2 text-neutral-500">Link geçersiz veya süresi dolmuş.</p>
+        <p className="mt-2 text-muted">Link geçersiz veya süresi dolmuş.</p>
       </Centered>
     )
   }
@@ -33,11 +33,11 @@ export default function Result() {
   if (s.status !== 'ready' || !s.result) {
     return (
       <Centered>
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-neutral-200 border-t-rose-500" />
-        <h1 className="mt-4 text-xl font-semibold text-neutral-900">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-sand-200 border-t-brand-500" />
+        <h1 className="mt-4 text-xl font-semibold text-ink">
           {s.hasGuest ? 'Rotanız hazırlanıyor…' : 'Karşı taraf bekleniyor…'}
         </h1>
-        <p className="mt-2 text-sm text-neutral-500">
+        <p className="mt-2 text-sm text-muted">
           {s.hasGuest
             ? 'İki cevap da geldi, ortak rota hesaplanıyor.'
             : 'Diğer kişi tercihlerini girince sonuç burada anında belirecek. Bu sayfayı açık bırakabilirsin.'}
@@ -51,17 +51,17 @@ export default function Result() {
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col gap-4 px-5 py-10">
       <header className="reveal text-center" style={{ animationDelay: '0ms' }}>
-        <p className="text-sm font-medium uppercase tracking-wide text-rose-500">
+        <p className="text-xs font-bold uppercase tracking-widest text-brand-500">
           Date Rotanız
         </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-neutral-900">
+        <h1 className="mt-1 font-display text-4xl font-semibold tracking-tight text-ink">
           {template.title}
         </h1>
       </header>
 
       {/* Senaryo metni */}
       <p
-        className="reveal text-center text-neutral-600"
+        className="reveal text-center text-muted"
         style={{ animationDelay: '90ms' }}
       >
         {template.copy}
@@ -73,19 +73,19 @@ export default function Result() {
           href={venue.mapsUrl}
           target="_blank"
           rel="noreferrer"
-          className="reveal block rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-rose-300 hover:shadow-sm"
+          className="reveal block rounded-2xl border border-sand-200 bg-white p-5 transition hover:border-brand-300 hover:shadow-sm"
           style={{ animationDelay: '180ms' }}
         >
-          <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">
             Önerilen mekân
           </p>
-          <p className="mt-1 text-lg font-semibold text-neutral-900">
+          <p className="mt-1 text-lg font-semibold text-ink">
             📍 {venue.name}
           </p>
           {venue.address && (
-            <p className="mt-0.5 text-sm text-neutral-500">{venue.address}</p>
+            <p className="mt-0.5 text-sm text-muted">{venue.address}</p>
           )}
-          <p className="mt-3 text-sm font-medium text-rose-600">
+          <p className="mt-3 text-sm font-medium text-brand-600">
             Haritada aç →
           </p>
           {venue._stub && (
@@ -99,10 +99,10 @@ export default function Result() {
       {/* Neden bu? — ortak tercih özeti */}
       {sharedPref && (
         <div
-          className="reveal rounded-2xl border border-neutral-200 bg-neutral-50 p-4"
+          className="reveal rounded-2xl border border-sand-200 bg-sand-100 p-4"
           style={{ animationDelay: '270ms' }}
         >
-          <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">
             Neden bu?
           </p>
           <div className="mt-2 flex flex-wrap gap-2 text-sm">
@@ -113,7 +113,7 @@ export default function Result() {
               <Chip key={a}>{activityLabel(a)}</Chip>
             ))}
           </div>
-          <p className="mt-2 text-xs text-neutral-400">
+          <p className="mt-2 text-xs text-muted">
             {sharedPref.activitiesMode === 'intersection'
               ? 'Ortak seçtiğiniz aktivitelere göre.'
               : 'Ortak nokta çıkmadı, ikinizin tercihlerini birleştirdik.'}
@@ -134,14 +134,14 @@ export default function Result() {
           <button
             type="button"
             onClick={() => setShowCard(true)}
-            className="w-full rounded-xl border border-rose-200 bg-rose-50 px-6 py-3 font-medium text-rose-700 transition hover:bg-rose-100"
+            className="w-full rounded-xl border border-brand-200 bg-brand-50 px-6 py-3 font-medium text-brand-700 transition hover:bg-brand-100"
           >
             💌 Bu rotayı kart olarak paylaş
           </button>
         )}
       </div>
 
-      <p className="mt-2 text-center text-xs text-neutral-400">
+      <p className="mt-2 text-center text-xs text-muted">
         İyi eğlenceler ✨ · Datchi
       </p>
     </main>
@@ -150,7 +150,7 @@ export default function Result() {
 
 function Centered({ children }) {
   return (
-    <main className="mx-auto flex min-h-svh max-w-md flex-col items-center justify-center px-6 text-center text-neutral-500">
+    <main className="mx-auto flex min-h-svh max-w-md flex-col items-center justify-center px-6 text-center text-muted">
       {children}
     </main>
   )
@@ -158,7 +158,7 @@ function Centered({ children }) {
 
 function Chip({ children }) {
   return (
-    <span className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-neutral-700">
+    <span className="rounded-full border border-sand-200 bg-white px-3 py-1 text-ink">
       {children}
     </span>
   )

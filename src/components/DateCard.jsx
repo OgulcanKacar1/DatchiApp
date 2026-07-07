@@ -40,20 +40,22 @@ export default function DateCard({ result }) {
         className="relative flex h-[560px] w-[315px] flex-col overflow-hidden rounded-[28px] p-7 text-white"
         style={{
           background:
-            'linear-gradient(160deg, #f43f5e 0%, #e11d48 45%, #9f1239 100%)',
+            'linear-gradient(160deg, #ff8aa0 0%, #ff4d6d 45%, #c11f41 100%)',
         }}
       >
         {/* Marka */}
         <div className="flex items-center gap-2">
           <span className="text-2xl">💘</span>
-          <span className="text-lg font-semibold tracking-tight">Datchi</span>
+          <span className="font-display text-lg font-semibold tracking-tight">
+            Datchi
+          </span>
         </div>
 
         <p className="mt-8 text-sm font-medium uppercase tracking-widest text-white/70">
           İlk buluşma rotamız
         </p>
 
-        <h2 className="mt-2 text-[34px] font-bold leading-[1.05] tracking-tight">
+        <h2 className="mt-2 font-display text-[34px] font-semibold leading-[1.05] tracking-tight">
           {template.title}
         </h2>
 
@@ -93,7 +95,7 @@ export default function DateCard({ result }) {
         type="button"
         onClick={download}
         disabled={busy}
-        className="w-full max-w-[315px] rounded-xl bg-neutral-900 px-6 py-3 font-medium text-white transition hover:bg-neutral-800 active:scale-[0.99] disabled:opacity-60"
+        className="w-full max-w-[315px] rounded-full bg-ink px-6 py-3.5 font-bold text-white transition hover:opacity-90 active:scale-[0.99] disabled:opacity-60"
       >
         {busy ? 'Hazırlanıyor…' : '📸 Kartı indir & paylaş'}
       </button>
