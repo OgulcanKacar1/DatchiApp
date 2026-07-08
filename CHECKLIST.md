@@ -89,12 +89,15 @@ Branch: `feat/hardening`
 - [x] Pipeline emülatör testi — özel cevaplar → matchDate → result (yeşil)
 - [x] `firebase.json` Hosting + SPA rewrite yapılandırması
 - [x] Güvenlik kuralları CANLIYA deploy edildi (test mode kapandı) ✓
-- [ ] TTL policy — Firestore Console → `expireAt` alanına 24s (KULLANICI, tek tık)
+- [x] TTL policy — `sessions`/`expireAt` (Building→Active)
+- [x] Blaze planına geçildi
+- [x] `firebase deploy` → **CANLI: https://datchiapp.web.app** (hosting + function + rules)
+- [x] Canlı pipeline smoke test — matchDate tetiklendi, result yazıldı ✓
+- [x] Artifact cleanup policy (maliyet kontrolü, europe-west3)
 - [ ] Firebase App Check + reCAPTCHA — abuse koruması (KULLANICI: site key + kod)
-- [ ] Blaze planına geç (KULLANICI — Function deploy için şart)
-- [ ] `npm run build` + `firebase deploy` → datchiapp.web.app canlı
+- [ ] Gerçek Places sağlayıcı (stub → Foursquare/Yandex) — anahtar Functions env'e
 - [ ] Domain `datchi.app` bağla (opsiyonel, sonra)
-- [ ] SEO/meta kontrolü ("Datchi" tek başına kalmasın, §3)
+- [x] SEO/meta — başlık "Datchi – İlk buluşma rotası" (§3)
 
 ---
 
