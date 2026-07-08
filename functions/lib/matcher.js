@@ -2,25 +2,59 @@
 // İki Answer'ı ortak tercihe indirger, şablonları puanlar, en iyi 2-3'ten seçer.
 // Firebase'e bağımlı DEĞİL → node ile doğrudan test edilebilir.
 
-// İki cevabı tek ortak tercihe indir — §7.1
+// "Farketmez" (wildcard) desteği: bir alan null/boş ise o taraf esnektir,
+// tercihi olan tarafa bırakılır. İkisi de esnekse alan nötrleşir.
+
+// İki tek-değerli tercihi birleştir (energy, timeOfDay):
+//  - ikisi de boş → null (nötr)
+//  - biri boş → diğeri (tercihi olana bırak)
+//  - ikisi dolu → aynıysa o, farklıysa null
+function mergeSingle(x, y) {
+  const vals = [x, y].filter(Boolean)
+  if (vals.length === 0) return null
+  if (vals.length === 1) return vals[0]
+  return x === y ? x : null
+}
+
+// İki cevabı tek ortak tercihe indir — §7.1 (+ farketmez)
 export function reduceToShared(a, b) {
-  // budget → MIN: kimseyi bütçesini aşan yere sürükleme
-  const budget = Math.min(a.budget, b.budget)
+  // budget → tercihi olanların MIN'i. İkisi de farketmezse orta (2) varsayılan.
+  const budgets = [a.budget, b.budget].filter((v) => v != null)
+  const budget = budgets.length === 0 ? 2 : Math.min(...budgets)
 
-  // activities → önce KESİŞİM; boşsa BİRLEŞİM'e düş
-  const setA = new Set(a.activities)
-  const intersection = b.activities.filter((x) => setA.has(x))
-  const union = [...new Set([...a.activities, ...b.activities])]
-  const activities = intersection.length > 0 ? intersection : union
-  const activitiesMode = intersection.length > 0 ? 'intersection' : 'union'
+  // activities → farketmez (boş) olan taraf karışmaz; tercihi olana bırakılır.
+  const aReal = Array.isArray(a.activities) && a.activities.length > 0
+  const bReal = Array.isArray(b.activities) && b.activities.length > 0
+  let activities
+  let activitiesMode
+  if (aReal && bReal) {
+    const setA = new Set(a.activities)
+    const intersection = b.activities.filter((x) => setA.has(x))
+    if (intersection.length > 0) {
+      activities = intersection
+      activitiesMode = 'intersection'
+    } else {
+      activities = [...new Set([...a.activities, ...b.activities])]
+      activitiesMode = 'union'
+    }
+  } else if (aReal) {
+    activities = [...a.activities]
+    activitiesMode = 'intersection' // tek taraf seçti, ona bırak
+  } else if (bReal) {
+    activities = [...b.activities]
+    activitiesMode = 'intersection'
+  } else {
+    activities = [] // ikisi de farketmez → aktivite skorlamaya girmez
+    activitiesMode = 'any'
+  }
 
-  // energy → aynıysa o değer, farklıysa null (nötr; şablon bonusu almaz)
-  const energy = a.energy === b.energy ? a.energy : null
-
-  // timeOfDay → aynıysa o değer, farklıysa null (bonus yok)
-  const timeOfDay = a.timeOfDay === b.timeOfDay ? a.timeOfDay : null
-
-  return { budget, activities, activitiesMode, energy, timeOfDay }
+  return {
+    budget,
+    activities,
+    activitiesMode,
+    energy: mergeSingle(a.energy, b.energy),
+    timeOfDay: mergeSingle(a.timeOfDay, b.timeOfDay),
+  }
 }
 
 // Tek şablonu ortak tercihe göre puanla — §7.2
@@ -43,9 +77,11 @@ export function scoreTemplate(template, shared) {
 // En yüksek skorlu 2-3 şablondan rastgele birini seç — §7.2
 // (Aynı girdiler her seferinde birebir aynı sonucu vermesin diye.)
 export function pickTemplate(templates, shared, rng = Math.random) {
+  // score null = bütçe elemesi (uygun değil). 0 dahil edilir: ikisi de "farketmez"
+  // ise her şey 0 olur ama yine de bütçeye uygun bir öneri dönmeli (boş kalmasın).
   const scored = templates
     .map((t) => ({ template: t, score: scoreTemplate(t, shared) }))
-    .filter((x) => x.score !== null && x.score > 0)
+    .filter((x) => x.score !== null)
     .sort((x, y) => y.score - x.score)
 
   if (scored.length === 0) return null

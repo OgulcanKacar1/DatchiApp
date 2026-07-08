@@ -8,6 +8,59 @@ import {
 } from '../lib/matcher.js'
 import { DATE_TEMPLATES } from '../lib/dateTemplates.js'
 
+// ── "Farketmez" (wildcard) senaryoları ──
+test('budget farketmez (null) → diğerinin bütçesi geçerli', () => {
+  const s = reduceToShared(
+    { budget: null, activities: ['kahve'], energy: null, timeOfDay: null },
+    { budget: 2, activities: ['kahve'], energy: null, timeOfDay: null },
+  )
+  assert.equal(s.budget, 2)
+})
+
+test('ikisi de budget farketmez → orta (2) varsayılan', () => {
+  const s = reduceToShared(
+    { budget: null, activities: [], energy: null, timeOfDay: null },
+    { budget: null, activities: [], energy: null, timeOfDay: null },
+  )
+  assert.equal(s.budget, 2)
+})
+
+test('aktivite: bir taraf farketmez → seçen tarafa bırakılır', () => {
+  const s = reduceToShared(
+    { budget: 2, activities: ['bar'], energy: null, timeOfDay: null },
+    { budget: 2, activities: [], energy: null, timeOfDay: null },
+  )
+  assert.deepEqual(s.activities, ['bar'])
+  assert.equal(s.activitiesMode, 'intersection')
+})
+
+test('ikisi de aktivite farketmez → mode "any", boş liste', () => {
+  const s = reduceToShared(
+    { budget: 2, activities: [], energy: null, timeOfDay: null },
+    { budget: 2, activities: [], energy: null, timeOfDay: null },
+  )
+  assert.deepEqual(s.activities, [])
+  assert.equal(s.activitiesMode, 'any')
+})
+
+test('enerji: bir taraf farketmez → diğerininki', () => {
+  const s = reduceToShared(
+    { budget: 2, activities: ['kahve'], energy: 'sakin', timeOfDay: null },
+    { budget: 2, activities: ['kahve'], energy: null, timeOfDay: null },
+  )
+  assert.equal(s.energy, 'sakin')
+})
+
+test('tamamen esnek çift bile bir öneri alır (boş dönmez)', () => {
+  const shared = reduceToShared(
+    { budget: null, activities: [], energy: null, timeOfDay: null, location: { lat: 41, lng: 29 } },
+    { budget: null, activities: [], energy: null, timeOfDay: null, location: { lat: 41, lng: 29 } },
+  )
+  const picked = pickTemplate(DATE_TEMPLATES, shared, () => 0)
+  assert.ok(picked, 'esnek çift için de bir şablon dönmeli')
+  assert.ok(picked.template.minBudget <= shared.budget)
+})
+
 test('budget MIN alınır (kimse bütçesini aşmaz)', () => {
   const s = reduceToShared(
     { budget: 3, activities: ['kahve'], energy: 'sakin', timeOfDay: 'akşam' },
