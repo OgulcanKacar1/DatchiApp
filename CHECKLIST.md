@@ -95,8 +95,16 @@ Branch: `feat/hardening`
 - [x] Canlı pipeline smoke test — matchDate tetiklendi, result yazıldı ✓
 - [x] Artifact cleanup policy (maliyet kontrolü, europe-west3)
 - [ ] Firebase App Check + reCAPTCHA — abuse koruması (KULLANICI: site key + kod)
-- [ ] Gerçek Places sağlayıcı (stub → Foursquare/Yandex) — anahtar Functions env'e
+- [x] Gerçek Places sağlayıcı — Foursquare (2025 API) CANLI, secret'la deploy, gerçek mekânlar doğrulandı ✓
 - [ ] Domain `datchi.app` bağla (opsiyonel, sonra)
+
+## 7. Öneri & İçerik Zenginleştirme
+Branch: `feat/richer-suggestions`
+- [x] +3 aktivite (sinema, spor, alışveriş) → 10 seçenek
+- [x] Date şablonları 18 → 36 (auto-sync client↔functions + sync testi)
+- [x] Foursquare gerçek mekânlar (yukarıda) — stub artık sadece anahtarsız fallback
+- [ ] Manuel konum seçimi (ilçe/mekân arama — GPS reddedilirse/başka semt için)
+- [ ] (Opsiyonel) mekân puanı/fotoğrafı reveal'de göster
 - [x] SEO/meta — başlık "Datchi – İlk buluşma rotası" (§3)
 
 ---
