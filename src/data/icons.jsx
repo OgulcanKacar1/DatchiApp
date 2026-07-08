@@ -8,6 +8,9 @@ import {
   Footprints,
   Dices,
   Drama,
+  Film,
+  Bike,
+  ShoppingBag,
   Moon,
   Zap,
   Sun,
@@ -22,6 +25,9 @@ export const ACTIVITY_ICON = {
   yuruyus: Footprints,
   aktivite: Dices,
   kultur: Drama,
+  sinema: Film,
+  spor: Bike,
+  alisveris: ShoppingBag,
 }
 
 export const ENERGY_ICON = {
