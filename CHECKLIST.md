@@ -103,7 +103,9 @@ Branch: `feat/richer-suggestions`
 - [x] +3 aktivite (sinema, spor, alışveriş) → 10 seçenek
 - [x] Date şablonları 18 → 36 (auto-sync client↔functions + sync testi)
 - [x] Foursquare gerçek mekânlar (yukarıda) — stub artık sadece anahtarsız fallback
-- [ ] Manuel konum seçimi (ilçe/mekân arama — GPS reddedilirse/başka semt için)
+- [x] Manuel konum seçimi — Nominatim semt/mekân araması (GPS'e alternatif) ✓
+- [x] "Farketmez" (wildcard) — bütçe/enerji/zaman/aktivite opsiyonel; matcher tercihi
+      olan tarafa bırakır, ikisi de esnekse nötr + boş dönmez. 17/17 test ✓
 - [ ] (Opsiyonel) mekân puanı/fotoğrafı reveal'de göster
 - [x] SEO/meta — başlık "Datchi – İlk buluşma rotası" (§3)
 
