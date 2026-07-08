@@ -11,6 +11,9 @@ export const ACTIVITIES = [
   { id: 'yuruyus', label: 'Yürüyüş', emoji: '🚶' },
   { id: 'aktivite', label: 'Aktivite / Oyun', emoji: '🎯' },
   { id: 'kultur', label: 'Kültür-Sanat', emoji: '🎭' },
+  { id: 'sinema', label: 'Sinema', emoji: '🎬' },
+  { id: 'spor', label: 'Spor', emoji: '🚴' },
+  { id: 'alisveris', label: 'Alışveriş', emoji: '🛍️' },
 ]
 
 // Doğrulama / eşleştirme için sadece id listesi

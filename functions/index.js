@@ -3,8 +3,13 @@
 // Cevaplar sessions/{id}/private/{creator|guest} altında; SADECE admin (bu Function)
 // okur, client okuyamaz. Sonuç ana dokümana yazılır.
 import { onDocumentCreated } from 'firebase-functions/v2/firestore'
+import { defineSecret } from 'firebase-functions/params'
 import { initializeApp } from 'firebase-admin/app'
 import { getFirestore, FieldValue } from 'firebase-admin/firestore'
+
+// Places sağlayıcı anahtarı — Secret Manager'da tutulur, koda/cliente girmez (§5).
+// Tanımlıysa places.js otomatik Foursquare'e geçer; yoksa stub'a düşer.
+const foursquareKey = defineSecret('FOURSQUARE_API_KEY')
 
 import { matchTemplate } from './lib/matcher.js'
 import { computeMidpoint, findVenue } from './lib/places.js'
@@ -13,7 +18,11 @@ import { DATE_TEMPLATES } from './lib/dateTemplates.js'
 initializeApp()
 
 export const matchDate = onDocumentCreated(
-  { document: 'sessions/{sessionId}/private/guest', region: 'europe-west3' },
+  {
+    document: 'sessions/{sessionId}/private/guest',
+    region: 'europe-west3',
+    secrets: [foursquareKey],
+  },
   async (event) => {
     const sessionId = event.params.sessionId
     const db = getFirestore()

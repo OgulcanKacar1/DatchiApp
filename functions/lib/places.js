@@ -15,15 +15,16 @@ export function computeMidpoint(a, b) {
   }
 }
 
-// Aktif sağlayıcıyı seç (varsayılan: stub → anahtarsız çalışır)
+// Aktif sağlayıcıyı seç:
+//  - PLACES_PROVIDER açıkça verilmişse ona uy
+//  - yoksa FOURSQUARE_API_KEY varsa Foursquare, hiçbiri yoksa stub (anahtarsız çalışır)
 function resolveProvider() {
-  switch (process.env.PLACES_PROVIDER) {
-    case 'foursquare':
-      return findVenueFoursquare
-    // case 'yandex': return findVenueYandex  // ileride
-    default:
-      return findVenueStub
-  }
+  const explicit = process.env.PLACES_PROVIDER
+  if (explicit === 'foursquare') return findVenueFoursquare
+  if (explicit === 'stub') return findVenueStub
+  // case 'yandex': return findVenueYandex  // ileride
+  if (process.env.FOURSQUARE_API_KEY) return findVenueFoursquare
+  return findVenueStub
 }
 
 // Orta nokta çevresinde gerçek mekân bul. İyi mekân yoksa yarıçapı genişlet (§7.3).
